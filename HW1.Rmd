@@ -1,0 +1,124 @@
+---
+title: "HW1"
+author: "Ryan Quon"
+date: '2022-09-29'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Homework 1
+
+
+## Question 1
+
+The main difference between supervised and unsupervised learning is that for supervised learning there are outcomes that can be measured against when using a model to predict. For unsupervised learning, there are no outcomes to test accuracy and often classify the data into clusters.
+
+## Question 2
+A regression model is a model that has a numeric outcome (quantitative), while a classification model has a categorical outcome (qualitative).
+
+## Question 3
+Regression: MSE and Bias
+
+Categorical: Error rate and Bayes Classifier
+
+
+## Question 4
+Descriptive: These models identify and emphasize a trend or relationship in the data.
+
+Predictive: A model that uses x to predict y with the most accuracy, not looking at significance
+
+Inferential:  determining correlation/relationship with x and y and making inference/causal claim, can be interested in slopes and their significance.
+
+## Question 5
+
+a)
+
+Mechanistic: Also known as parametric have an assumption about the parameters of a  population and become more flexible as additional parameters are added. 
+
+Empirically-driven: Also known as non-parametric, there are no assumptions in an empirically-driven model, more flexibility than parametric models, but require more observations.
+
+These 2 are similar as there is a possibility of overfitting data for each model. 
+
+
+b)
+
+I would say parametric models are easier to understand because they have a set structure or known set of assumptions. For example, in a linear model it is known there is an intercept and parameters that will create a line with a known shape of a straight line. 
+
+
+
+c) 
+
+The bias-variance tradeoff is an important component in modeling. As models become more flexible the variance may decrease but the bias increases and vice versa. Finding the MSE is a metric for models. This trade-off is important to determining model complexity and flexibility for both types as well as which is the best model to use.
+
+
+
+## Question 6
+
+Case 1) Predictive: This question deals with trying to figure out the percent change that a person votes for the candidate, it not trying to find a cause or make a claim about voting.
+
+Case 2) Inferential: This question is trying to find a relationship and seeing if the claim is true which is inline with an inference question.
+
+Source: "Lecture 1 (Introduction) slides"
+
+# EDA
+```{r}
+library(tidyverse)
+head(mpg)
+
+```
+
+## Exercise 1
+
+In the histogram for the hwy variable, I see the data has 2 peaks and is slightly right skewed with a mean of ~23.
+```{r}
+hist(mpg$hwy)
+mean(mpg$hwy)
+```
+
+
+## Exercise 2
+
+Generally it appears as the hwy increases the cty variable also increases. Possibly indicating a linear relationship.
+```{r}
+ggplot(data = mpg, aes(x = hwy, y= cty)) + geom_point()
+```
+
+## Exercise 3
+Most: Dodge
+Least: Lincoln 
+```{r}
+require(forcats)
+ggplot(data = mpg, aes(y=fct_infreq(manufacturer))) + geom_bar()
+
+```
+
+## Exercise 4
+
+It appears as cyl variable increases the hwy variable decreases. In another words as the number of cylinders increases the highway mpg decreases since the means/boxes are decreasing. The IQR length varies for each cyl as well.
+```{r}
+ggplot(mpg, aes(x=cyl, group=cyl, y=hwy, fill = cyl)) + 
+  geom_boxplot()
+```
+
+
+## Exercise 5
+Positive: cyl corrleated with displ & cty correlated with hwy
+Negative: cty corrleated with  cyl & cty corrleated with displ & hwy corrleated with displ & hwy corrleated with cyl
+
+This makes since because the bigger the car (i.e. more cylinders) then fuel economy should decrease hence the negative correlation.
+For the postive correlations, they make sense because fuel economy both highway and city should increase together as well as with more cylinders it is assumed an increase in engine displacement is intiuitve.
+```{r}
+library(corrplot)
+data <- mpg %>% 
+  select(where(is.numeric))%>% 
+  select(-year)
+
+data <- cor(data)
+?cor
+corrplot(data, type = 'lower')
+
+```
+
